@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTable, usePagination, useFilters, useSortBy } from 'react-table';
 
 const generatePageButtons = (currentPage, lastPage) => {
@@ -16,10 +17,10 @@ const generatePageButtons = (currentPage, lastPage) => {
   //      1, 2, 3, 4, 5, ..., 20
   //      1, ..., 16, 17, 18, 19, 20
   else {
-    if (currentPage <= 5) {
+    if (currentPage <= 4) {
       rangeElipses = [1, 2, 3, 4, 5, '...', lastPage];
     }
-    else if (currentPage >= lastPage-4) {
+    else if (currentPage >= lastPage-3) {
       rangeElipses = [1, '...', lastPage-4, lastPage-3, lastPage-2, lastPage-1, lastPage];
     }
     else {
@@ -43,6 +44,7 @@ const ReactTable = ({ columns, data }) => {
     nextPage,
     previousPage,
     setPageSize,
+    filteredRows,
     state: { pageIndex, pageSize }
   } = useTable(
     {
@@ -62,15 +64,27 @@ const ReactTable = ({ columns, data }) => {
     {label: 'All', value: data.length},
   ];
 
+  useEffect(() => {
+    console.log("page size ", pageSize);
+  }, [pageSize]);
+
+  useEffect(() => {
+    console.log("current page ", pageIndex);
+  }, [pageIndex]);
+
+  useEffect(() => {
+    console.log(page);
+  }, [page]);
+
   return (
     <div className="py-3">
       {
         // Search/filters
-        headerGroups.map(headerGroup => (
-          <div className="row mb-3">
+        headerGroups.map((headerGroup, index) => (
+          <div key={index} className="row mb-3">
             {
-              headerGroup.headers.map(column => (
-                <div className="col-3 py-2">{column.render('Filter')}</div>
+              headerGroup.headers.map((column, index) => (
+                <div key={index} className="col-3 py-2">{column.render('Filter')}</div>
               ))
             }
           </div>
@@ -104,11 +118,12 @@ const ReactTable = ({ columns, data }) => {
           </nav>
         </div>
         {/* Page length select */}
-        <div className="col-12 col-md-auto ml-auto">
+        <div className="col-12 col-md-auto ml-auto text-right">
           <span>Page Length: </span>
-          <select value={pageSize} onChange={e => setPageSize(e.target.value)}>
+          <select value={pageSize} onChange={e => setPageSize(Number(e.target.value))}>
             { pageLengthOptions.map((option, index) => (<option key={index} value={option.value}>{option.label}</option>)) }
-          </select>
+          </select><br/>
+          <small>Showing entries {(pageIndex*pageSize)+1} to {(pageIndex*pageSize)+Number(pageSize) < filteredRows.length ? (pageIndex*pageSize)+Number(pageSize) : filteredRows.length} of {filteredRows.length}</small>
         </div>
       </div>
       {/* Table */}
