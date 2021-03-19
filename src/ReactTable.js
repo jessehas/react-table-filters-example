@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useTable, usePagination, useFilters, useSortBy } from 'react-table';
 
 const generatePageButtons = (currentPage, lastPage) => {
@@ -63,18 +62,6 @@ const ReactTable = ({ columns, data }) => {
     {label: '50', value: 50},
     {label: 'All', value: data.length},
   ];
-
-  useEffect(() => {
-    console.log("page size ", pageSize);
-  }, [pageSize]);
-
-  useEffect(() => {
-    console.log("current page ", pageIndex);
-  }, [pageIndex]);
-
-  useEffect(() => {
-    console.log(page);
-  }, [page]);
 
   return (
     <div className="py-3">
